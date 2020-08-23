@@ -20,6 +20,15 @@ const itemSchema = {
 
 const Item = mongoose.model("Item", itemSchema);
 
+const orderSchema = {
+  isCompleted: Boolean,
+  tableNumber: Number,
+  items: [itemSchema],
+  timestamp: Date,
+};
+
+const Order = mongoose.model("Order", orderSchema);
+
 const item1 = new Item({
   name: "Gado-Gado",
   quantity: 1,
@@ -38,33 +47,29 @@ const item3 = new Item({
   note: "Daging aja",
 });
 
-const orderSchema = {
-  tableNumber: Number,
-  items: [itemSchema],
-  timestamp: Date,
-};
-
-const Order = mongoose.model("Order", orderSchema);
-
 const order1 = {
+  isCompleted: false,
   tableNumber: 1,
   items: [item1, item2],
   timestamp: 01,
 };
 
 const order2 = {
+  isCompleted: false,
   tableNumber: 2,
   items: [item2],
   timestamp: 02,
 };
 
 const order3 = {
+  isCompleted: false,
   tableNumber: 3,
   items: [item3, item2, item1],
   timestamp: 03,
 };
 
 const order4 = {
+  isCompleted: false,
   tableNumber: 4,
   items: [item2, item3, item1],
   timestamp: 04,
@@ -72,6 +77,7 @@ const order4 = {
 
 const dummyOrders = [order1, order2, order3, order4];
 
+// dummy orders
 Order.insertMany(dummyOrders, function (err) {
   if (err) {
     console.log(err);
@@ -80,36 +86,42 @@ Order.insertMany(dummyOrders, function (err) {
   }
 });
 
-// newOrders collection, fetch
-app.get("/server/newOrders/fetch", function (req, res) {
+// Fetch orders from newOrders collection
+app.get("/server/orders/fetch", function (req, res) {
   //get all orders in the new orders collection in db
-  Order.find({}, function (err, foundOrders) {
-    if (!err) {
-      // console.log(foundOrders);
-      res.send(foundOrders);
-    } else {
+  Order.find({ isCompleted: false }, function (err, foundOrders) {
+    if (err) {
       console.log(err);
+    } else {
+      res.send(foundOrders);
     }
   });
-  // res.send("michael wang here");
 });
 
-// newOrders collection, delete
-app.post("/server/newOrders/delete", function (req, res) {
-  // delete an order based on id
-
-  // const orderId = req.body.orderId;
+// Delete an order based on the id from newOrders collection
+app.post("/server/orders/delete", function (req, res) {
   const orderId = req.body.id;
   Order.findByIdAndRemove(orderId, function (err) {
     if (err) {
       console.log(err);
     } else {
       console.log("Successfully deleted order with Id: ", orderId);
+      res.send(); // must res.send(); otherwise won't redirect back to the client.
     }
   });
+});
 
-  res.send("Successfully deleted order");
-  // res.redirect("/") should we redirect? lets find out.
+// Set completed property of the order to true
+app.post("/server/orders/complete", function (req, res) {
+  const orderId = req.body.id;
+  Order.findByIdAndUpdate(orderId, { isCompleted: true }, function (err) {
+    if (err) {
+      console.log(err);
+    } else {
+      console.log("Successfully completed order with Id: ", orderId);
+      res.send();
+    }
+  });
 });
 
 app.get("/server/test", function (req, res) {

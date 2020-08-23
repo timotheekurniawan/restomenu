@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import DeleteIcon from "@material-ui/icons/Delete";
 import CheckCircleIcon from "@material-ui/icons/CheckCircle";
 import { IconButton } from "@material-ui/core";
@@ -7,18 +7,19 @@ import axios from "axios";
 
 export default function Order(props) {
   function deleteOrder() {
-    //delete order from db and remove card
-    // second arg must be an object
-    axios.post("/server/newOrders/delete", { id: props.id }).then((res) => {
-      console.log(res.data);
+    // delete order from db and fetch orders. second arg must be an object
+    axios.post("/server/orders/delete", { id: props.id }).then((res) => {
+      console.log("Successfully deleted order.");
+      props.fetchOrders();
     });
-    props.deleteCard(0);
   }
 
   function completeOrder() {
-    //move order from newOrder collection to completedOrder collection
-    //and remove card
-    console.log("Complete Order Successful");
+    //move order from newOrder collection to completedOrder collection and fetch Orders
+    axios.post("/server/orders/complete", { id: props.id }).then((res) => {
+      console.log("Successfully completed order.");
+      props.fetchOrders();
+    });
   }
 
   return (
