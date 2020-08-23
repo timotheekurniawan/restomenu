@@ -50,3 +50,35 @@ footer {
 html {
 	scroll-behavior: smooth;
 }
+
+.box {
+	max-width: 400px;
+	margin: 50px auto;
+	background: white;
+	border-radius: 5px;
+	box-shadow: 5px 5px 15px -5px rgba(0, 0, 0, 0.3);
+}
+
+#heading {
+	background-color: #c1bfc5;
+	text-align: center;
+}
+
+.order {
+	min-height: 70px;
+	display: flex;
+	align-items: center;
+	border-bottom: 1px solid #f1f1f1;
+}
+
+.order:last-child {
+	border-bottom: 0;
+}
+
+p {
+	margin: 0;
+	padding: 20px;
+	font-size: 20px;
+	font-weight: 200;
+	color: #00204a;
+}

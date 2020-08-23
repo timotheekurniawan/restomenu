@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+	<head>
+		<meta charset="utf-8" />
+		<title>My Restaurant Menu</title>
+		<link
+			rel="stylesheet"
+			href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+		/>
+		<link rel="stylesheet" href="css/styles.css" />
+		<script
+			src="https://kit.fontawesome.com/e0174865f2.js"
+			crossorigin="anonymous"
+		></script>
+	</head>
+
+	<body>
+		<div class="box" id="heading">
+			<h1>Orders</h1>
+		</div>
+
+		<div class="box">
+			<% newOrders.forEach(function(orders){%>
+			<div class="order row">
+				<div class="col-md-6"><p><%= orders.name %></p></div>
+				<div class="cold-md-6">
+					<p>Quantity: <%= orders.quantity %></p>
+				</div>
+			</div>
+			<%})%>
+			<button type="button" class="btn btn-success finalbutton">
+				Finalize Orders
+			</button>
+		</div>
+	</body>
+</html>

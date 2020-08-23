@@ -25,32 +25,101 @@ const orderSchema = {
 
 const Order = mongoose.model("Order", orderSchema);
 
+const dummy = new Order({
+	name: "dummy",
+	quantity: 0,
+});
+
+dummy.save();
+
+Order.deleteOne({ name: "dummy" }, function (err) {
+	if (err) {
+		console.log(err);
+	} else {
+		console.log("successfully deleted dummy order.");
+	}
+});
+
 app.get("/", function (req, res) {
 	res.render("menu");
 });
 
 app.post("/", function (req, res) {
-	var order = req.body.newOrder;
-
-	Order.find({ name: order }, function (err, foundInCart) {
+	Order.find({ name: req.body.newOrder }, "name", function (
+		err,
+		foundInCart
+	) {
 		if (err) {
 			console.log(err);
 		} else {
-			if (foundInCart.name === order) {
-				Order.update({ name: order }, { $inc: { quantity: +1 } });
+			if (foundInCart.length > 0) {
+				Order.updateOne(
+					{ name: req.body.newOrder },
+					{ $inc: { quantity: +1 } },
+					function (err) {
+						if (err) {
+							console.log(err);
+						} else {
+							console.log("successfully updated the cart");
+						}
+					}
+				);
 			} else {
-				Order.insertOne({ name: order, quantity: 1 });
+				const newOrder = new Order({
+					name: req.body.newOrder,
+					quantity: 1,
+				});
+				newOrder.save();
 			}
 		}
 	});
-
-	// totalOrders.push(order);
-	// console.log(totalOrders);
 });
 
-// app.listen(3000, function () {
-// 	console.log("Server started on port 3000");
+app.get("/orders", function (req, res) {
+	Order.find({}, function (err, foundOrders) {
+		res.render("orders", { newOrders: foundOrders });
+	});
+});
+
+app.post("/orders");
+// Order.deleteOne({ quantity: 0 }, function (err) {
+// 	if (err) {
+// 		console.log(err);
+// 	} else {
+// 		console.log("succesfully deleted dummy order");
+// 	}
 // });
+
+// app.post("/", function (req, res) {
+// 	Order.updateOne(
+// 		{ name: req.body.newOrder },
+// 		{ $inc: { quantity: +1 } },
+// 		function (err) {
+// 			if (err) {
+// 				console.log(err);
+// 			} else {
+// found = true;
+// console.log("Successfully updated the cart");
+// console.log(found);
+// 		}
+// 	}
+// );
+// if (found == false) {
+// 	const newOrder = new Order({
+// 		name: req.body.newOrder,
+// 		quantity: 1,
+// 	});
+// 	newOrder.save();
+// 	found = false;
+// }
+// });
+
+Order.deleteMany({ quantity: 0 }, function (err) {
+	if (!err) {
+		console.log("Successfully deleted dummy order");
+	}
+});
+
 let port = process.env.PORT;
 if (port == null || port == "") {
 	port = 3000;
