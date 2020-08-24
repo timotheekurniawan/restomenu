@@ -6,8 +6,6 @@ const mongoose = require("mongoose");
 
 const app = express();
 
-var totalOrders = [];
-
 app.set("view engine", "ejs");
 
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -21,24 +19,11 @@ mongoose.connect("mongodb://localhost:27017/restaurantDB", {
 const orderSchema = {
 	name: String,
 	quantity: Number,
+	note: String,
+	isCompleted: Boolean,
 };
 
 const Order = mongoose.model("Order", orderSchema);
-
-const dummy = new Order({
-	name: "dummy",
-	quantity: 0,
-});
-
-dummy.save();
-
-Order.deleteOne({ name: "dummy" }, function (err) {
-	if (err) {
-		console.log(err);
-	} else {
-		console.log("successfully deleted dummy order.");
-	}
-});
 
 app.get("/", function (req, res) {
 	res.render("menu");
@@ -68,6 +53,7 @@ app.post("/", function (req, res) {
 				const newOrder = new Order({
 					name: req.body.newOrder,
 					quantity: 1,
+					isCompleted: false,
 				});
 				newOrder.save();
 			}
@@ -82,43 +68,6 @@ app.get("/orders", function (req, res) {
 });
 
 app.post("/orders");
-// Order.deleteOne({ quantity: 0 }, function (err) {
-// 	if (err) {
-// 		console.log(err);
-// 	} else {
-// 		console.log("succesfully deleted dummy order");
-// 	}
-// });
-
-// app.post("/", function (req, res) {
-// 	Order.updateOne(
-// 		{ name: req.body.newOrder },
-// 		{ $inc: { quantity: +1 } },
-// 		function (err) {
-// 			if (err) {
-// 				console.log(err);
-// 			} else {
-// found = true;
-// console.log("Successfully updated the cart");
-// console.log(found);
-// 		}
-// 	}
-// );
-// if (found == false) {
-// 	const newOrder = new Order({
-// 		name: req.body.newOrder,
-// 		quantity: 1,
-// 	});
-// 	newOrder.save();
-// 	found = false;
-// }
-// });
-
-Order.deleteMany({ quantity: 0 }, function (err) {
-	if (!err) {
-		console.log("Successfully deleted dummy order");
-	}
-});
 
 let port = process.env.PORT;
 if (port == null || port == "") {
