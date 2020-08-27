@@ -2,15 +2,25 @@ import React, { useState, useEffect } from "react";
 import { ListItem, List } from "@material-ui/core";
 import Order from "./Order";
 import axios from "axios";
+import socketIOClient from "socket.io-client";
+const ENDPOINT = "http://127.0.0.1:4000";
 
 export default function OrdersView() {
   // empty array as initial
   const [orders, setOrders] = useState([]);
 
+  // TODO: SOCKET.ON DOES NOT SEEM TO LISTEN TO SOCKET.EMIT "ISUPTODATE". FIX THIS.
   useEffect(() => {
-    // setOrders([]); // empty orders, then fetch again. the  michael weng u fucking smart
+    // fetch orders the first time
     fetchOrders();
-  }, []); // empty array as second argument to prevent infinite loop (run only once, on initial render)
+    const socket = socketIOClient(ENDPOINT);
+    socket.on("isUptodate", (data) => {
+      // listen to "isUptodate" from the backend.
+      if (data === false) {
+        fetchOrders();
+      }
+    });
+  }, []);
 
   function fetchOrders() {
     // fetch orders from db
@@ -20,7 +30,7 @@ export default function OrdersView() {
     });
   }
 
-  console.log(orders);
+  // console.log(orders);
 
   return (
     <div style={{ height: "600px", width: "100%", overflow: "auto" }}>
