@@ -10,11 +10,6 @@ export default function OrderCard(props) {
       <div className="heading">
         <h1>Table {props.tableNumber}</h1>
       </div>
-      {/* <InputArea
-        handleChange={handleChange}
-        addItem={addItem}
-        inputText={inputText}
-      /> */}
       <div>
         <ul>
           {/* items index at 0 bcs the item  is 2 layers deep idk why */}
